@@ -1,0 +1,197 @@
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Ana Frame (Center Frame)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 500, 0, 500)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5, -250)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.Parent = mainFrame
+
+-- Sol Taraf Butonlar Frame
+local buttonsFrame = Instance.new("Frame")
+buttonsFrame.Size = UDim2.new(0, 150, 0, 400)
+buttonsFrame.Position = UDim2.new(0, 10, 0, 50)
+buttonsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+buttonsFrame.Parent = mainFrame
+
+local uiCorner2 = Instance.new("UICorner")
+uiCorner2.CornerRadius = UDim.new(0, 10)
+uiCorner2.Parent = buttonsFrame
+
+-- Enable Butonu
+local enableButton = Instance.new("TextButton")
+enableButton.Size = UDim2.new(0, 100, 0, 50)
+enableButton.Position = UDim2.new(0, 10, 0, 10)
+enableButton.Text = "Enable"
+enableButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+enableButton.Parent = buttonsFrame
+
+local autofarmEnabled = false
+
+-- Autofarm Butonu
+local autofarmButton = Instance.new("TextButton")
+autofarmButton.Size = UDim2.new(0, 100, 0, 50)
+autofarmButton.Position = UDim2.new(0, 10, 0, 70)  -- Autofarm butonunun konumunu ayarladık
+autofarmButton.Text = "Autofarm"
+autofarmButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+autofarmButton.Parent = buttonsFrame
+
+-- Teleport Positions (Işınlanılacak pozisyonlar)
+local teleportPositions = {
+    Vector3.new(287, 137, 351), -- 1
+    Vector3.new(310, 137, 345),  -- 2
+    Vector3.new(394, 138, 570),    -- 3
+    Vector3.new(19, 138, 515),  -- 4
+    Vector3.new(-153, 137, 224),  -- 5
+}
+
+-- Teleport Function
+local teleportIndex = 1
+local teleporting = false  -- Bu değişken teleport işleminde devam etmeyi kontrol edecek
+
+local function teleportToNextPosition()
+    while autofarmEnabled and teleporting do
+        local teleportPosition = teleportPositions[teleportIndex]
+        if teleportPosition then
+            game.Players.LocalPlayer.Character:MoveTo(teleportPosition)
+            print("Teleporting to: " .. tostring(teleportPosition))
+        end
+        
+        -- Pozisyonları sırayla geç
+        teleportIndex = teleportIndex + 1
+        if teleportIndex > #teleportPositions then
+            teleportIndex = 1  -- Eğer son pozisyona geldiyse, tekrar başa döner
+        end
+
+        wait(3)  -- 3 saniye bekleyip işlemi tekrarlar
+    end
+end
+
+-- Autofarm Butonuna Tıklanınca
+autofarmButton.MouseButton1Click:Connect(function()
+    autofarmEnabled = not autofarmEnabled
+    if autofarmEnabled then
+        enableButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Kırmızıya döner
+        autofarmButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Kırmızıya döner
+        print("Autofarm Enabled!")
+        teleporting = true  -- Autofarm başlatıldığında teleporting aktif olur
+        teleportToNextPosition()  -- Burada teleport fonksiyonu çağırılıyor
+    else
+        enableButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Yeşile döner
+        autofarmButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Yeşile döner
+        print("Autofarm Disabled!")
+        teleporting = false  -- Autofarm durduğunda teleporting durur
+    end
+end)
+
+-- Teleport Frame
+local teleportFrame = Instance.new("Frame")
+teleportFrame.Size = UDim2.new(0, 300, 0, 200)
+teleportFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+teleportFrame.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+teleportFrame.Visible = false
+teleportFrame.Parent = screenGui
+
+local teleportButton = Instance.new("TextButton")
+teleportButton.Size = UDim2.new(0, 100, 0, 50)
+teleportButton.Position = UDim2.new(0, 10, 0, 10)
+teleportButton.Text = "Teleport"
+teleportButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+teleportButton.Parent = buttonsFrame
+
+-- Teleport Functionality
+local playerTextbox = Instance.new("TextBox")
+playerTextbox.Size = UDim2.new(0, 250, 0, 50)
+playerTextbox.Position = UDim2.new(0.5, -125, 0.5, -60)
+playerTextbox.Text = "Enter Player Name"
+playerTextbox.Parent = teleportFrame
+
+local teleportButtonFinal = Instance.new("TextButton")
+teleportButtonFinal.Size = UDim2.new(0, 250, 0, 50)
+teleportButtonFinal.Position = UDim2.new(0.5, -125, 0.5, 30)
+teleportButtonFinal.Text = "Teleport"
+teleportButtonFinal.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+teleportButtonFinal.Parent = teleportFrame
+
+-- Teleport frame close button
+local teleportCloseButton = Instance.new("TextButton")
+teleportCloseButton.Size = UDim2.new(0, 50, 0, 50)
+teleportCloseButton.Position = UDim2.new(1, -60, 0, 10)
+teleportCloseButton.Text = "X"
+teleportCloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+teleportCloseButton.Parent = teleportFrame
+
+teleportButton.MouseButton1Click:Connect(function()
+    teleportFrame.Visible = true
+end)
+
+teleportButtonFinal.MouseButton1Click:Connect(function()
+    local playerName = playerTextbox.Text
+    local targetPlayer = game.Players:FindFirstChild(playerName)
+    if targetPlayer then
+        game.Players.LocalPlayer.Character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position)
+        print("Teleported to: " .. playerName)
+    else
+        print("Player not found!")
+    end
+end)
+
+teleportCloseButton.MouseButton1Click:Connect(function()
+    teleportFrame.Visible = false
+end)
+
+-- Close Main GUI Button (Kapat Butonu)
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 100, 0, 50)
+closeButton.Position = UDim2.new(0.5, -50, 0.5, -220)
+closeButton.Text = "Close GUI"
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.Parent = mainFrame
+
+closeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false  -- Ana GUI'yi kapat
+    print("GUI Closed")
+end)
+
+-- Sağ Shift Tuşu ile Ana GUI'yi açıp kapama
+local guiVisible = true  -- Başlangıçta GUI görünüyor
+
+local uis = game:GetService("UserInputService")
+uis.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        guiVisible = not guiVisible
+        mainFrame.Visible = guiVisible  -- Ana GUI'yi aç veya kapat
+    end
+end)
+
+-- Ana Frame'in sürüklenebilir olması için gerekli kod
+local dragging = false
+local dragInput, mousePos, framePos
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = mainFrame.Position
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - mousePos
+        mainFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
+
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
