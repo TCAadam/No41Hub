@@ -49,6 +49,8 @@ local teleportPositions = {
     Vector3.new(394, 138, 570),    -- 3
     Vector3.new(19, 138, 515),  -- 4
     Vector3.new(-153, 137, 224),  -- 5
+    Vector3.new(314, 137, 80),  -- 6
+    Vector3.new(142, 137, 172),  -- 7
 }
 
 -- Teleport Function
